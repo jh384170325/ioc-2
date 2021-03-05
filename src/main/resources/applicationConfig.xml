@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xmlns:aop="http://www.springframework.org/schema/aop"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--扫包-->
+    <context:component-scan base-package="com.woniu"/>
+
+    <!--配置拦截器-->
+    <bean id="filter" class="com.woniu.filter.impl.MyFilterImpl"/>
+
+    <!--开启aop配置-->
+    <aop:config>
+        <!--配置切入点
+            expression：切点表达式的属性 -->
+        <aop:pointcut id="point" expression="execution(* com.woniu.service.impl.*.*(..))"/>
+        <!--配置切面  ref：引入拦截器-->
+        <aop:aspect ref="filter">
+            <!--配置四个通知
+                method：拦截器中的方法名
+                pointcut-ref：引入配置的切点（主要是需要表达式）-->
+            <aop:before method="before" pointcut-ref="point"/>
+            <aop:after-returning method="returns" pointcut-ref="point"/>
+            <aop:after-throwing method="exception" pointcut-ref="point"/>
+            <aop:after method="after" pointcut-ref="point"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
